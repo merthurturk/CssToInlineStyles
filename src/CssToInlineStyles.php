@@ -165,6 +165,7 @@ class CssToInlineStyles
                 }
 
                 // search elements
+                /** @var \DOMNodeList $elements */
                 $elements = $xPath->query($query);
 
                 // validate elements
@@ -174,6 +175,7 @@ class CssToInlineStyles
 
                 // loop found elements
                 foreach ($elements as $element) {
+                    /** @var \DOMElement $element */
                     // no styles stored?
                     if ($element->attributes->getNamedItem(
                             'data-css-to-inline-styles-original-styles'
@@ -246,10 +248,18 @@ class CssToInlineStyles
                     $propertyChunks = array();
 
                     // build chunks
+                    $bgColor = null;
                     foreach ($properties as $key => $values) {
                         foreach ((array) $values as $value) {
                             $propertyChunks[] = $key . ': ' . $value . ';';
+                            if ($key === 'background-color') {
+                                $bgColor = $value;
+                            }
                         }
+                    }
+
+                    if (! is_null($bgColor) && $element->attributes->getNamedItem('bgcolor')) {
+                        $element->setAttribute('bgcolor', $bgColor);
                     }
 
                     // build properties string
